@@ -1,37 +1,36 @@
-import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { FiArrowRight, FiMail, FiUser } from "react-icons/fi";
+import { FiArrowRight, FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { loginUser } from "../services/api";
 
 type LoginForm = {
-  name: string;
   email: string;
+  password: string;
 };
 
 type LoginErrors = Partial<Record<keyof LoginForm, string>>;
 
 const initialForm: LoginForm = {
-  name: "",
   email: "",
+  password: "",
 };
 
 function validateLoginForm(form: LoginForm) {
   const errors: LoginErrors = {};
-  const trimmedName = form.name.trim();
   const trimmedEmail = form.email.trim();
-
-  if (!trimmedName) {
-    errors.name = "Name is required.";
-  } else if (trimmedName.length < 2) {
-    errors.name = "Name must be at least 2 characters.";
-  }
 
   if (!trimmedEmail) {
     errors.email = "Email is required.";
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
     errors.email = "Enter a valid email address.";
+  }
+
+  if (!form.password) {
+    errors.password = "Password is required.";
+  } else if (form.password.length < 8) {
+    errors.password = "Password must be at least 8 characters.";
   }
 
   return errors;
@@ -41,6 +40,7 @@ function MobileLogin() {
   const [form, setForm] = useState<LoginForm>(initialForm);
   const [errors, setErrors] = useState<LoginErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (field: keyof LoginForm, value: string) => {
     setForm((currentForm) => ({ ...currentForm, [field]: value }));
@@ -60,11 +60,16 @@ function MobileLogin() {
     setIsSubmitting(true);
 
     try {
-      await axios.post("/api/auth/login", {
-        name: form.name.trim(),
+      const payload = {
         email: form.email.trim(),
-      });
-
+        password: form.password,
+      };
+      const response = await loginUser(payload);
+      console.log("Login response:", response);
+      if (response && response.token) {
+        localStorage.setItem("token", response.token);
+        console.log("Login successful:", response);
+      }
       setForm(initialForm);
     } catch {
       setErrors({
@@ -88,7 +93,10 @@ function MobileLogin() {
           transition={{ duration: 0.45 }}
           className="relative z-10 flex items-center justify-between text-white"
         >
-          <Link to="/" className="font-space-grotesk text-xl font-bold tracking-normal">
+          <Link
+            to="/"
+            className="font-space-grotesk text-xl font-bold tracking-normal"
+          >
             sortMyScene
           </Link>
         </motion.header>
@@ -104,48 +112,83 @@ function MobileLogin() {
           <div className="mb-5 flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-primary">Log in</p>
-              <h2 className="font-space-grotesk text-2xl font-bold tracking-normal">Welcome back</h2>
+              <h2 className="font-space-grotesk text-2xl font-bold tracking-normal">
+                Welcome back
+              </h2>
             </div>
           </div>
 
           <div className="space-y-4">
             <label className="block">
-              <span className="mb-2 block text-sm font-semibold">Full name</span>
-              <span
-                className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3 transition ${
-                  errors.name ? "border-red-400" : "border-seat-gray1 focus-within:border-primary"
-                }`}
-              >
-                <FiUser className={errors.name ? "text-red-500" : "text-primary"} />
-                <input
-                  value={form.name}
-                  onChange={(event) => handleChange("name", event.target.value)}
-                  className="w-full bg-transparent text-base font-medium outline-none placeholder:text-seat-gray2"
-                  placeholder="Aarav Sharma"
-                  autoComplete="name"
-                />
+              <span className="mb-2 block text-sm font-semibold">
+                Email address
               </span>
-              {errors.name && <span className="mt-2 block text-xs font-semibold text-red-500">{errors.name}</span>}
-            </label>
-
-            <label className="block">
-              <span className="mb-2 block text-sm font-semibold">Email address</span>
               <span
                 className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3 transition ${
-                  errors.email ? "border-red-400" : "border-seat-gray1 focus-within:border-primary"
+                  errors.email
+                    ? "border-red-400"
+                    : "border-seat-gray1 focus-within:border-primary"
                 }`}
               >
-                <FiMail className={errors.email ? "text-red-500" : "text-primary"} />
+                <FiMail
+                  className={errors.email ? "text-red-500" : "text-primary"}
+                />
                 <input
                   value={form.email}
-                  onChange={(event) => handleChange("email", event.target.value)}
+                  onChange={(event) =>
+                    handleChange("email", event.target.value)
+                  }
                   className="w-full bg-transparent text-base font-medium outline-none placeholder:text-seat-gray2"
                   placeholder="you@example.com"
                   type="email"
                   autoComplete="email"
                 />
               </span>
-              {errors.email && <span className="mt-2 block text-xs font-semibold text-red-500">{errors.email}</span>}
+              {errors.email && (
+                <span className="mt-2 block text-xs font-semibold text-red-500">
+                  {errors.email}
+                </span>
+              )}
+            </label>
+
+            <label className="block">
+              <span className="mb-2 block text-sm font-semibold">
+                Password
+              </span>
+              <span
+                className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3 transition ${
+                  errors.password
+                    ? "border-red-400"
+                    : "border-seat-gray1 focus-within:border-primary"
+                }`}
+              >
+                <FiLock
+                  className={errors.password ? "text-red-500" : "text-primary"}
+                />
+                <input
+                  value={form.password}
+                  onChange={(event) =>
+                    handleChange("password", event.target.value)
+                  }
+                  className="w-full bg-transparent text-base font-medium outline-none placeholder:text-seat-gray2"
+                  placeholder="8+ characters"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((currentValue) => !currentValue)}
+                  className="cursor-pointer text-seat-gray2 transition hover:text-primary"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
+              </span>
+              {errors.password && (
+                <span className="mt-2 block text-xs font-semibold text-red-500">
+                  {errors.password}
+                </span>
+              )}
             </label>
           </div>
 
@@ -174,7 +217,10 @@ function MobileLogin() {
           className="relative z-10 mt-5 grid grid-cols-3 gap-3 pb-4"
         >
           {["Concerts", "Standup", "Movies"].map((scene) => (
-            <div key={scene} className="rounded-2xl border border-seat-gray1 bg-white px-3 py-3 text-center shadow-sm">
+            <div
+              key={scene}
+              className="rounded-2xl border border-seat-gray1 bg-white px-3 py-3 text-center shadow-sm"
+            >
               <p className="text-xs font-bold text-text/70">{scene}</p>
             </div>
           ))}

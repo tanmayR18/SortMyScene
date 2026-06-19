@@ -1,9 +1,17 @@
-import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { FiArrowRight, FiEye, FiEyeOff, FiLock, FiMail, FiUser, FiX } from "react-icons/fi";
+import {
+  FiArrowRight,
+  FiEye,
+  FiEyeOff,
+  FiLock,
+  FiMail,
+  FiUser,
+  FiX,
+} from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { createUser } from "../services/api";
 
 type SignupModalProps = {
   onClose?: () => void;
@@ -75,11 +83,17 @@ function SignupModal({ onClose }: SignupModalProps) {
     setIsSubmitting(true);
 
     try {
-      await axios.post("/api/auth/signup", {
+      const payload = {
         name: form.name.trim(),
         email: form.email.trim(),
-        password: form.password,
-      });
+        password: form.password.trim(),
+      };
+      const response = await createUser(payload);
+      console.log("Signup response:", response);
+      if (response && response.token) {
+        localStorage.setItem("token", response.token);
+        console.log("Signup successful:", response);
+      }
 
       setForm(initialForm);
     } catch {
@@ -104,7 +118,9 @@ function SignupModal({ onClose }: SignupModalProps) {
         <div className="relative z-10 mb-7 flex items-start justify-between gap-4">
           <div>
             <p className="text-sm font-semibold text-primary">Sign up</p>
-            <h2 className="mt-1 font-space-grotesk text-3xl font-bold tracking-normal">Create your account</h2>
+            <h2 className="mt-1 font-space-grotesk text-3xl font-bold tracking-normal">
+              Create your account
+            </h2>
           </div>
 
           {onClose && (
@@ -121,7 +137,9 @@ function SignupModal({ onClose }: SignupModalProps) {
 
         <div className="relative z-10 space-y-4">
           <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-text">Full name</span>
+            <span className="mb-2 block text-sm font-semibold text-text">
+              Full name
+            </span>
             <span
               className={`flex items-center gap-3 rounded-2xl border px-4 py-3 transition ${
                 errors.name
@@ -129,7 +147,9 @@ function SignupModal({ onClose }: SignupModalProps) {
                   : "border-seat-gray1 bg-white focus-within:border-primary"
               }`}
             >
-              <FiUser className={errors.name ? "text-red-500" : "text-primary"} />
+              <FiUser
+                className={errors.name ? "text-red-500" : "text-primary"}
+              />
               <input
                 value={form.name}
                 onChange={(event) => handleChange("name", event.target.value)}
@@ -138,11 +158,17 @@ function SignupModal({ onClose }: SignupModalProps) {
                 autoComplete="name"
               />
             </span>
-            {errors.name && <span className="mt-2 block text-xs font-semibold text-red-500">{errors.name}</span>}
+            {errors.name && (
+              <span className="mt-2 block text-xs font-semibold text-red-500">
+                {errors.name}
+              </span>
+            )}
           </label>
 
           <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-text">Email address</span>
+            <span className="mb-2 block text-sm font-semibold text-text">
+              Email address
+            </span>
             <span
               className={`flex items-center gap-3 rounded-2xl border px-4 py-3 transition ${
                 errors.email
@@ -150,7 +176,9 @@ function SignupModal({ onClose }: SignupModalProps) {
                   : "border-seat-gray1 bg-white focus-within:border-primary"
               }`}
             >
-              <FiMail className={errors.email ? "text-red-500" : "text-primary"} />
+              <FiMail
+                className={errors.email ? "text-red-500" : "text-primary"}
+              />
               <input
                 value={form.email}
                 onChange={(event) => handleChange("email", event.target.value)}
@@ -160,11 +188,17 @@ function SignupModal({ onClose }: SignupModalProps) {
                 autoComplete="email"
               />
             </span>
-            {errors.email && <span className="mt-2 block text-xs font-semibold text-red-500">{errors.email}</span>}
+            {errors.email && (
+              <span className="mt-2 block text-xs font-semibold text-red-500">
+                {errors.email}
+              </span>
+            )}
           </label>
 
           <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-text">Password</span>
+            <span className="mb-2 block text-sm font-semibold text-text">
+              Password
+            </span>
             <span
               className={`flex items-center gap-3 rounded-2xl border px-4 py-3 transition ${
                 errors.password
@@ -172,10 +206,14 @@ function SignupModal({ onClose }: SignupModalProps) {
                   : "border-seat-gray1 bg-white focus-within:border-primary"
               }`}
             >
-              <FiLock className={errors.password ? "text-red-500" : "text-primary"} />
+              <FiLock
+                className={errors.password ? "text-red-500" : "text-primary"}
+              />
               <input
                 value={form.password}
-                onChange={(event) => handleChange("password", event.target.value)}
+                onChange={(event) =>
+                  handleChange("password", event.target.value)
+                }
                 className="w-full bg-transparent text-base font-medium text-text outline-none placeholder:text-seat-gray2"
                 placeholder="8+ characters"
                 type={showPassword ? "text" : "password"}
@@ -190,7 +228,11 @@ function SignupModal({ onClose }: SignupModalProps) {
                 {showPassword ? <FiEyeOff /> : <FiEye />}
               </button>
             </span>
-            {errors.password && <span className="mt-2 block text-xs font-semibold text-red-500">{errors.password}</span>}
+            {errors.password && (
+              <span className="mt-2 block text-xs font-semibold text-red-500">
+                {errors.password}
+              </span>
+            )}
           </label>
         </div>
 

@@ -1,9 +1,16 @@
-import axios from "axios";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { FiArrowRight, FiEye, FiEyeOff, FiLock, FiMail, FiUser } from "react-icons/fi";
+import {
+  FiArrowRight,
+  FiEye,
+  FiEyeOff,
+  FiLock,
+  FiMail,
+  FiUser,
+} from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { createUser } from "../services/api";
 
 type SignupForm = {
   name: string;
@@ -71,11 +78,17 @@ function MobileSignup() {
     setIsSubmitting(true);
 
     try {
-      await axios.post("/api/auth/signup", {
+      const payload = {
         name: form.name.trim(),
         email: form.email.trim(),
-        password: form.password,
-      });
+        password: form.password.trim(),
+      };
+      const response = await createUser(payload);
+      console.log("Signup response:", response);
+      if (response && response.token) {
+        localStorage.setItem("token", response.token);
+        console.log("Signup successful:", response);
+      }
 
       setForm(initialForm);
     } catch {
@@ -99,11 +112,13 @@ function MobileSignup() {
           transition={{ duration: 0.45 }}
           className="relative z-10 flex items-center justify-between text-white"
         >
-          <Link to="/" className="font-space-grotesk text-xl font-bold tracking-normal">
+          <Link
+            to="/"
+            className="font-space-grotesk text-xl font-bold tracking-normal"
+          >
             sortMyScene
           </Link>
         </motion.header>
-
 
         <motion.form
           initial={{ opacity: 0, y: 34 }}
@@ -116,19 +131,27 @@ function MobileSignup() {
           <div className="mb-5 flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-primary">Sign up</p>
-              <h2 className="font-space-grotesk text-2xl font-bold tracking-normal">Create your account</h2>
+              <h2 className="font-space-grotesk text-2xl font-bold tracking-normal">
+                Create your account
+              </h2>
             </div>
           </div>
 
           <div className="space-y-4">
             <label className="block">
-              <span className="mb-2 block text-sm font-semibold">Full name</span>
+              <span className="mb-2 block text-sm font-semibold">
+                Full name
+              </span>
               <span
                 className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3 transition ${
-                  errors.name ? "border-red-400" : "border-seat-gray1 focus-within:border-primary"
+                  errors.name
+                    ? "border-red-400"
+                    : "border-seat-gray1 focus-within:border-primary"
                 }`}
               >
-                <FiUser className={errors.name ? "text-red-500" : "text-primary"} />
+                <FiUser
+                  className={errors.name ? "text-red-500" : "text-primary"}
+                />
                 <input
                   value={form.name}
                   onChange={(event) => handleChange("name", event.target.value)}
@@ -137,40 +160,62 @@ function MobileSignup() {
                   autoComplete="name"
                 />
               </span>
-              {errors.name && <span className="mt-2 block text-xs font-semibold text-red-500">{errors.name}</span>}
+              {errors.name && (
+                <span className="mt-2 block text-xs font-semibold text-red-500">
+                  {errors.name}
+                </span>
+              )}
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm font-semibold">Email address</span>
+              <span className="mb-2 block text-sm font-semibold">
+                Email address
+              </span>
               <span
                 className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3 transition ${
-                  errors.email ? "border-red-400" : "border-seat-gray1 focus-within:border-primary"
+                  errors.email
+                    ? "border-red-400"
+                    : "border-seat-gray1 focus-within:border-primary"
                 }`}
               >
-                <FiMail className={errors.email ? "text-red-500" : "text-primary"} />
+                <FiMail
+                  className={errors.email ? "text-red-500" : "text-primary"}
+                />
                 <input
                   value={form.email}
-                  onChange={(event) => handleChange("email", event.target.value)}
+                  onChange={(event) =>
+                    handleChange("email", event.target.value)
+                  }
                   className="w-full bg-transparent text-base font-medium outline-none placeholder:text-seat-gray2"
                   placeholder="you@example.com"
                   type="email"
                   autoComplete="email"
                 />
               </span>
-              {errors.email && <span className="mt-2 block text-xs font-semibold text-red-500">{errors.email}</span>}
+              {errors.email && (
+                <span className="mt-2 block text-xs font-semibold text-red-500">
+                  {errors.email}
+                </span>
+              )}
             </label>
 
             <label className="block">
               <span className="mb-2 block text-sm font-semibold">Password</span>
               <span
                 className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3 transition ${
-                  errors.password ? "border-red-400" : "border-seat-gray1 focus-within:border-primary"
+                  errors.password
+                    ? "border-red-400"
+                    : "border-seat-gray1 focus-within:border-primary"
                 }`}
               >
-                <FiLock className={errors.password ? "text-red-500" : "text-primary"} />
+                <FiLock
+                  className={errors.password ? "text-red-500" : "text-primary"}
+                />
                 <input
                   value={form.password}
-                  onChange={(event) => handleChange("password", event.target.value)}
+                  onChange={(event) =>
+                    handleChange("password", event.target.value)
+                  }
                   className="w-full bg-transparent text-base font-medium outline-none placeholder:text-seat-gray2"
                   placeholder="8+ characters"
                   type={showPassword ? "text" : "password"}
@@ -178,7 +223,9 @@ function MobileSignup() {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword((currentValue) => !currentValue)}
+                  onClick={() =>
+                    setShowPassword((currentValue) => !currentValue)
+                  }
                   className="text-seat-gray2 transition hover:text-primary"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
@@ -186,7 +233,9 @@ function MobileSignup() {
                 </button>
               </span>
               {errors.password && (
-                <span className="mt-2 block text-xs font-semibold text-red-500">{errors.password}</span>
+                <span className="mt-2 block text-xs font-semibold text-red-500">
+                  {errors.password}
+                </span>
               )}
             </label>
           </div>
@@ -216,7 +265,10 @@ function MobileSignup() {
           className="relative z-10 mt-5 grid grid-cols-3 gap-3 pb-4"
         >
           {["Concerts", "Standup", "Movies"].map((scene) => (
-            <div key={scene} className="rounded-2xl border border-seat-gray1 bg-white px-3 py-3 text-center shadow-sm">
+            <div
+              key={scene}
+              className="rounded-2xl border border-seat-gray1 bg-white px-3 py-3 text-center shadow-sm"
+            >
               <p className="text-xs font-bold text-text/70">{scene}</p>
             </div>
           ))}
