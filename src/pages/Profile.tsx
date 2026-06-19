@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaTicketAlt, FaUserCircle, FaSignOutAlt } from "react-icons/fa";
+import { FaTicketAlt, FaUserCircle, FaSignOutAlt, FaChevronLeft } from "react-icons/fa";
 import LoginModal from "../components/LoginModal";
 import SignupModal from "../components/SignupModal";
 import toast from "react-hot-toast";
@@ -57,7 +57,16 @@ function Profile() {
       <main className="min-h-screen bg-background font-inter text-text pb-28">
         <header className="sticky top-0 z-30 border-b border-seat-gray1 bg-white/95 backdrop-blur-xl">
           <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-            <Link to="/" className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate(-1)}
+                aria-label="Go back"
+                className="mr-2 flex h-10 w-10 items-center justify-center rounded-md text-primary transition hover:bg-seat-gray1"
+                type="button"
+              >
+                <FaChevronLeft />
+              </button>
+              <Link to="/" className="flex items-center gap-3">
               <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white shadow-[0_14px_30px_rgba(124,58,237,0.28)]">
                 <FaTicketAlt />
               </span>
@@ -69,9 +78,10 @@ function Profile() {
                   Discover events near you
                 </span>
               </span>
-            </Link>
+              </Link>
+              </div>
 
-            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
               <button
                 className="hidden cursor-pointer rounded-xl px-4 py-2 text-sm font-bold text-text transition hover:text-primary md:block"
                 onClick={() => setActiveAuthModal("login")}
@@ -131,7 +141,16 @@ function Profile() {
     <main className="min-h-screen bg-background font-inter text-text pb-28">
       <header className="sticky top-0 z-30 border-b border-seat-gray1 bg-white/95 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              aria-label="Go back"
+              className="mr-2 flex h-10 w-10 items-center justify-center rounded-md text-primary transition hover:bg-seat-gray1"
+              type="button"
+            >
+              <FaChevronLeft />
+            </button>
+            <Link to="/" className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white shadow-[0_14px_30px_rgba(124,58,237,0.28)]">
               <FaTicketAlt />
             </span>
@@ -144,6 +163,7 @@ function Profile() {
               </span>
             </span>
           </Link>
+          </div>
 
           <Link
             aria-label="Go to profile"

@@ -4,10 +4,12 @@ import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import ScrollToTop from "./utils/ScrollToTop.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
+     <ScrollToTop /> 
       <App />
       <Toaster/>
     </BrowserRouter>

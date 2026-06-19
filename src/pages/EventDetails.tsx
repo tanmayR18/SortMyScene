@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import {
   FaArrowRight,
   FaCalendarAlt,
+  FaChevronLeft,
   FaMapMarkerAlt,
   FaTicketAlt,
   FaUserCircle,
@@ -136,7 +137,16 @@ function EventDetails() {
     <main className="min-h-screen bg-background font-inter text-text pb-28">
       <header className="sticky top-0 z-30 border-b border-seat-gray1 bg-white/95 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              aria-label="Go back"
+              className="mr-2 flex h-10 w-10 items-center justify-center rounded-md text-primary transition hover:bg-seat-gray1"
+              type="button"
+            >
+              <FaChevronLeft />
+            </button>
+            <Link to="/" className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white shadow-[0_14px_30px_rgba(124,58,237,0.28)]">
               <FaTicketAlt />
             </span>
@@ -149,6 +159,7 @@ function EventDetails() {
               </span>
             </span>
           </Link>
+          </div>
 
           {isAuthenticated ? (
             <Link
@@ -247,7 +258,7 @@ function EventDetails() {
 
       {/* Fixed buy bar */}
       <div className="fixed bottom-4 left-0 right-0 z-40 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-2xl bg-white/95 px-4 py-3 shadow-lg backdrop-blur sm:flex sm:items-center sm:justify-between">
+        <div className="rounded-2xl bg-white/95 px-4 py-3 shadow-lg backdrop-blur sm:flex sm:items-center justify-between">
           <div className="mb-3 flex items-center gap-4 sm:mb-0">
             <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-seat-gray1">
               <img
@@ -264,7 +275,7 @@ function EventDetails() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-6">
+          <div className="flex items-center justify-between gap-3 sm:gap-6  ">
             <div className="text-left">
               <div className="text-sm font-semibold text-primary">
                 From ₹499
