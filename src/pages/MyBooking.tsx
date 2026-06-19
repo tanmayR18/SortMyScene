@@ -1,8 +1,8 @@
 import toast from "react-hot-toast";
 import { getBookings, getEventById } from "../services/api";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaMapMarkerAlt, FaTicketAlt, FaUserCircle } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { FaCalendarAlt, FaChevronLeft, FaMapMarkerAlt, FaTicketAlt, FaUserCircle } from "react-icons/fa";
 import LoginModal from "../components/LoginModal";
 import SignupModal from "../components/SignupModal";
 
@@ -30,6 +30,7 @@ type Event = {
 const hasStoredToken = () => Boolean(localStorage.getItem("token")?.trim());
 
 function MyBooking() {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [eventsMap, setEventsMap] = useState<Record<string, Event | null>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -89,7 +90,16 @@ function MyBooking() {
     <main className="min-h-screen bg-background font-inter text-text pb-28">
       <header className="sticky top-0 z-30 border-b border-seat-gray1 bg-white/95 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              aria-label="Go back"
+              className="mr-2 flex h-10 w-10 items-center justify-center rounded-md text-primary transition hover:bg-seat-gray1"
+              type="button"
+            >
+              <FaChevronLeft />
+            </button>
+            <Link to="/" className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white shadow-[0_14px_30px_rgba(124,58,237,0.28)]">
               <FaTicketAlt />
             </span>
@@ -102,6 +112,7 @@ function MyBooking() {
               </span>
             </span>
           </Link>
+          </div>
 
           {isAuthenticated ? (
             <Link
