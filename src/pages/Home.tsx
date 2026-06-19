@@ -158,27 +158,29 @@ function Home() {
             </Link>
           ) : (
             <div className="flex items-center gap-2 sm:gap-3">
-              <Link
+              {/* <Link
                 to="/login"
                 className="rounded-xl px-3 py-2 text-sm font-bold text-text transition hover:text-primary md:hidden"
               >
                 Log in
-              </Link>
+              </Link> */}
+              {/* hidden md:block */}
               <button
-                className="hidden cursor-pointer rounded-xl px-4 py-2 text-sm font-bold text-text transition hover:text-primary md:block"
+                className=" cursor-pointer rounded-xl px-4 py-2 text-sm font-bold text-text transition hover:text-primary "
                 onClick={() => setActiveAuthModal("login")}
                 type="button"
               >
                 Log in
               </button>
-              <Link
+              {/* <Link
                 to="/signup"
                 className="rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-[0_14px_30px_rgba(124,58,237,0.26)] transition hover:bg-primary-hover md:hidden"
               >
                 Sign up
-              </Link>
+              </Link> */}
+              {/* hidden md:block */}
               <button
-                className="hidden cursor-pointer rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-[0_14px_30px_rgba(124,58,237,0.26)] transition hover:bg-primary-hover md:block"
+                className=" cursor-pointer rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-[0_14px_30px_rgba(124,58,237,0.26)] transition hover:bg-primary-hover"
                 onClick={() => setActiveAuthModal("signup")}
                 type="button"
               >
