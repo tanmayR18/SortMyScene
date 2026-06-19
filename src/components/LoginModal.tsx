@@ -11,9 +11,12 @@ import {
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { loginUser } from "../services/api";
+import toast from "react-hot-toast";
 
 type LoginModalProps = {
   onClose?: () => void;
+  onSuccess?: () => void;
+  onSwitchToSignup?: () => void;
 };
 
 type LoginForm = {
@@ -31,6 +34,7 @@ const initialForm: LoginForm = {
 function validateLoginForm(form: LoginForm) {
   const errors: LoginErrors = {};
   const trimmedEmail = form.email.trim();
+  const trimmedPassword = form.password.trim();
 
   if (!trimmedEmail) {
     errors.email = "Email is required.";
@@ -38,16 +42,16 @@ function validateLoginForm(form: LoginForm) {
     errors.email = "Enter a valid email address.";
   }
 
-  if (!form.password) {
+  if (!trimmedPassword) {
     errors.password = "Password is required.";
-  } else if (form.password.length < 8) {
+  } else if (trimmedPassword.length < 8) {
     errors.password = "Password must be at least 8 characters.";
   }
 
   return errors;
 }
 
-function LoginModal({ onClose }: LoginModalProps) {
+function LoginModal({ onClose, onSuccess, onSwitchToSignup }: LoginModalProps) {
   const [form, setForm] = useState<LoginForm>(initialForm);
   const [errors, setErrors] = useState<LoginErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,20 +77,18 @@ function LoginModal({ onClose }: LoginModalProps) {
     try {
       const payload = {
         email: form.email.trim(),
-        password: form.password,
+        password: form.password.trim(),
       };
       const response = await loginUser(payload);
-      console.log("Login response:", response);
       if (response && response.token) {
         localStorage.setItem("token", response.token);
-        console.log("Login successful:", response);
+        onSuccess?.();
+        onClose?.();
       }
 
       setForm(initialForm);
     } catch {
-      setErrors({
-        email: "Login failed. Please check your details and try again.",
-      });
+      toast.error("Unable to login. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -206,9 +208,19 @@ function LoginModal({ onClose }: LoginModalProps) {
 
         <p className="relative z-10 mt-5 text-center text-sm text-text/60">
           New to sortMyScene?{" "}
-          <Link to="/signup" className="font-bold text-primary">
-            Create an account
-          </Link>
+          {onSwitchToSignup ? (
+            <button
+              type="button"
+              className="cursor-pointer font-bold text-primary"
+              onClick={onSwitchToSignup}
+            >
+              Create an account
+            </button>
+          ) : (
+            <Link to="/signup" className="font-bold text-primary">
+              Create an account
+            </Link>
+          )}
         </p>
       </motion.form>
     </div>

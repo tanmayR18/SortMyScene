@@ -12,9 +12,12 @@ import {
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { createUser } from "../services/api";
+import toast from "react-hot-toast";
 
 type SignupModalProps = {
   onClose?: () => void;
+  onSuccess?: () => void;
+  onSwitchToLogin?: () => void;
 };
 
 type SignupForm = {
@@ -35,6 +38,7 @@ function validateSignupForm(form: SignupForm) {
   const errors: SignupErrors = {};
   const trimmedName = form.name.trim();
   const trimmedEmail = form.email.trim();
+  const trimmedPassword = form.password.trim();
 
   if (!trimmedName) {
     errors.name = "Name is required.";
@@ -48,18 +52,18 @@ function validateSignupForm(form: SignupForm) {
     errors.email = "Enter a valid email address.";
   }
 
-  if (!form.password) {
+  if (!trimmedPassword) {
     errors.password = "Password is required.";
-  } else if (form.password.length < 8) {
+  } else if (trimmedPassword.length < 8) {
     errors.password = "Password must be at least 8 characters.";
-  } else if (!/(?=.*[A-Za-z])(?=.*\d)/.test(form.password)) {
+  } else if (!/(?=.*[A-Za-z])(?=.*\d)/.test(trimmedPassword)) {
     errors.password = "Use letters and at least one number.";
   }
 
   return errors;
 }
 
-function SignupModal({ onClose }: SignupModalProps) {
+function SignupModal({ onClose, onSuccess, onSwitchToLogin }: SignupModalProps) {
   const [form, setForm] = useState<SignupForm>(initialForm);
   const [errors, setErrors] = useState<SignupErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -89,17 +93,16 @@ function SignupModal({ onClose }: SignupModalProps) {
         password: form.password.trim(),
       };
       const response = await createUser(payload);
-      console.log("Signup response:", response);
+
       if (response && response.token) {
         localStorage.setItem("token", response.token);
-        console.log("Signup successful:", response);
+        onSuccess?.();
+        onClose?.();
       }
 
       setForm(initialForm);
     } catch {
-      setErrors({
-        email: "Signup failed. Please check your details and try again.",
-      });
+      toast.error("Unable to create account. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -248,9 +251,19 @@ function SignupModal({ onClose }: SignupModalProps) {
 
         <p className="relative z-10 mt-5 text-center text-sm text-text/60">
           Already have an account?{" "}
-          <Link to="/login" className="font-bold text-primary">
-            Log in
-          </Link>
+          {onSwitchToLogin ? (
+            <button
+              type="button"
+              className="cursor-pointer font-bold text-primary"
+              onClick={onSwitchToLogin}
+            >
+              Log in
+            </button>
+          ) : (
+            <Link to="/login" className="font-bold text-primary">
+              Log in
+            </Link>
+          )}
         </p>
       </motion.form>
     </div>

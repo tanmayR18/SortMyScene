@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import MobileLogin from "./pages/MobileLogin";
 import MobileSignup from "./pages/MobileSignup";
@@ -6,10 +6,15 @@ import Profile from "./pages/Profile";
 import MyBooking from "./pages/MyBooking";
 import EventDetails from "./pages/EventDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Footer from "./components/Footer";
 
 function App() {
+  const location = useLocation();
+  const hideFooter =
+    location.pathname === "/login" || location.pathname === "/signup";
+
   return (
-    <div className="">
+    <div className="min-h-screen bg-background">
       <Routes>
         <Route index path="/" element={<Home />} />
         <Route path="/login" element={<MobileLogin />} />
@@ -32,6 +37,7 @@ function App() {
         />
         <Route path="/event/:id" element={<EventDetails />} />
       </Routes>
+      {!hideFooter && <Footer />}
     </div>
   );
 }

@@ -2,8 +2,9 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { FiArrowRight, FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../services/api";
+import toast from "react-hot-toast";
 
 type LoginForm = {
   email: string;
@@ -20,6 +21,7 @@ const initialForm: LoginForm = {
 function validateLoginForm(form: LoginForm) {
   const errors: LoginErrors = {};
   const trimmedEmail = form.email.trim();
+  const trimmedPassword = form.password.trim();
 
   if (!trimmedEmail) {
     errors.email = "Email is required.";
@@ -27,9 +29,9 @@ function validateLoginForm(form: LoginForm) {
     errors.email = "Enter a valid email address.";
   }
 
-  if (!form.password) {
+  if (!trimmedPassword) {
     errors.password = "Password is required.";
-  } else if (form.password.length < 8) {
+  } else if (trimmedPassword.length < 8) {
     errors.password = "Password must be at least 8 characters.";
   }
 
@@ -37,6 +39,7 @@ function validateLoginForm(form: LoginForm) {
 }
 
 function MobileLogin() {
+  const navigate = useNavigate();
   const [form, setForm] = useState<LoginForm>(initialForm);
   const [errors, setErrors] = useState<LoginErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,19 +65,16 @@ function MobileLogin() {
     try {
       const payload = {
         email: form.email.trim(),
-        password: form.password,
+        password: form.password.trim(),
       };
       const response = await loginUser(payload);
-      console.log("Login response:", response);
       if (response && response.token) {
         localStorage.setItem("token", response.token);
-        console.log("Login successful:", response);
+        navigate("/");
       }
       setForm(initialForm);
     } catch {
-      setErrors({
-        email: "Login failed. Please check your details and try again.",
-      });
+      toast.error("Unable to login. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -152,9 +152,7 @@ function MobileLogin() {
             </label>
 
             <label className="block">
-              <span className="mb-2 block text-sm font-semibold">
-                Password
-              </span>
+              <span className="mb-2 block text-sm font-semibold">Password</span>
               <span
                 className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3 transition ${
                   errors.password
@@ -177,7 +175,9 @@ function MobileLogin() {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword((currentValue) => !currentValue)}
+                  onClick={() =>
+                    setShowPassword((currentValue) => !currentValue)
+                  }
                   className="cursor-pointer text-seat-gray2 transition hover:text-primary"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
