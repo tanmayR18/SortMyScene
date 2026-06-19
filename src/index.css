@@ -1,1 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap");
 @import "tailwindcss";
+
+@theme {
+  --font-inter: "Inter", sans-serif;
+  --font-space-grotesk: "Space Grotesk", sans-serif;
+
+  --color-background: #ffffff;
+  --color-primary: #7c3aed;
+  --color-primary-hover: #6d28d9;
+  --color-text: #1a1b23;
+  --color-seat-green: #22c55e;
+  --color-seat-gray1: #e5e7eb;
+  --color-seat-gray2: #d1d5db;
+
+}
+
+/* Color Sceheme */
+
+/* Theme
+Background - #FFFFFF
+Primary action - #7C3AED 
+Primary hover/pressed - #6D28D9 
+*/
+
+/* 
+Seat Grid
+Booked sit - #E5E7EB
+Selected sit - #22C55E
+Available sit - #FFFFF with #D1D5DB border 
+*/
