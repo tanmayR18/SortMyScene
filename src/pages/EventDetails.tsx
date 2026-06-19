@@ -247,7 +247,7 @@ function EventDetails() {
 
       {/* Fixed buy bar */}
       <div className="fixed bottom-4 left-0 right-0 z-40 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-2xl bg-white/95 px-4 py-3 shadow-lg backdrop-blur sm:flex sm:items-center sm:justify-between">
+        <div className="rounded-2xl bg-white/95 px-4 py-3 shadow-lg backdrop-blur sm:flex sm:items-center justify-between">
           <div className="mb-3 flex items-center gap-4 sm:mb-0">
             <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-seat-gray1">
               <img
@@ -264,7 +264,7 @@ function EventDetails() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-6">
+          <div className="flex items-center justify-between gap-3 sm:gap-6  ">
             <div className="text-left">
               <div className="text-sm font-semibold text-primary">
                 From ₹499
