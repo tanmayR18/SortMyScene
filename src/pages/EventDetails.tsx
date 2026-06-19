@@ -13,7 +13,11 @@ import LoginModal from "../components/LoginModal";
 import SignupModal from "../components/SignupModal";
 import SeatGrid from "../components/SeatGrid";
 import BookingModal from "../components/BookingModal";
-import { getEventById } from "../services/api";
+import {
+  bookReservedSeats,
+  cancelReserveSeat,
+  getEventById,
+} from "../services/api";
 
 type Event = {
   _id: string;
@@ -46,7 +50,9 @@ function EventDetails() {
   const [event, setEvent] = useState<Event | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(hasStoredToken);
-  const [activeAuthModal, setActiveAuthModal] = useState<"login" | "signup" | null>(null);
+  const [activeAuthModal, setActiveAuthModal] = useState<
+    "login" | "signup" | null
+  >(null);
   const [showSeatModal, setShowSeatModal] = useState(false);
   const [reservationInfo, setReservationInfo] = useState<null | any>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -92,23 +98,35 @@ function EventDetails() {
     setShowBookingModal(true);
   };
 
-  const cancelReservation = async () => {
-    // placeholder cancel logic - API may be added later
-    toast.success("Reservation cancelled");
-    setReservationInfo(null);
-    setShowBookingModal(false);
+  const cancelReservation = async (revId: string) => {
+    try {
+      const response = await cancelReserveSeat(revId);
+      if (response?.success) {
+        toast.success("Reservation cancelled");
+        setReservationInfo(null);
+        setShowBookingModal(false);
+      }
+    } catch {
+      toast.error("Unable to cancel reservation. Please try again.");
+    } finally {
+      // will decide later
+    }
   };
 
-  const bookSeats = async () => {
-    // placeholder booking logic - will implement actual booking later
+  const bookSeats = async (revId: string) => {
     try {
-      // TODO: call booking API
-      toast.success("Payment successful. Booking confirmed.");
-      setShowBookingModal(false);
-      setReservationInfo(null);
-      navigate("/my-bookings");
+      const payload = {
+        reservationId: revId,
+      };
+      const response = await bookReservedSeats(payload);
+      if (response?.success) {
+        toast.success("Payment successful. Booking confirmed.");
+        setShowBookingModal(false);
+        setReservationInfo(null);
+        navigate("/my-bookings");
+      }
       return true;
-    } catch (err) {
+    } catch {
       toast.error("Payment failed. Please try again.");
       return false;
     }
@@ -131,14 +149,6 @@ function EventDetails() {
               </span>
             </span>
           </Link>
-
-          <div className="hidden flex-1 items-center rounded-xl border border-seat-gray1 bg-white px-4 py-3 shadow-sm transition focus-within:border-primary md:flex md:max-w-md lg:max-w-xl">
-            <input
-              className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-text/40"
-              placeholder="Search for events, artists, venues"
-              type="search"
-            />
-          </div>
 
           {isAuthenticated ? (
             <Link
@@ -188,7 +198,9 @@ function EventDetails() {
                   <p className="mb-3 w-fit rounded-full bg-white/15 px-4 py-2 text-xs font-bold uppercase tracking-[0.12em]">
                     Event
                   </p>
-                  <h1 className="font-space-grotesk text-4xl font-bold sm:text-5xl">{event.name}</h1>
+                  <h1 className="font-space-grotesk text-4xl font-bold sm:text-5xl">
+                    {event.name}
+                  </h1>
                   <div className="mt-4 flex flex-col gap-3 text-sm font-semibold sm:flex-row sm:items-center">
                     <span className="flex items-center gap-2">
                       <FaCalendarAlt className="text-primary" />
@@ -205,8 +217,12 @@ function EventDetails() {
               <div className="p-6 sm:p-8">
                 <div className="mb-6 flex items-center justify-between">
                   <div>
-                    <h2 className="font-space-grotesk text-2xl font-bold">About the event</h2>
-                    <p className="mt-1 text-sm text-text/60">{event.totalSeats} seats available</p>
+                    <h2 className="font-space-grotesk text-2xl font-bold">
+                      About the event
+                    </h2>
+                    <p className="mt-1 text-sm text-text/60">
+                      {event.totalSeats} seats available
+                    </p>
                   </div>
                 </div>
 
@@ -214,13 +230,17 @@ function EventDetails() {
                   {event.description ? (
                     <p>{event.description}</p>
                   ) : (
-                    <p className="text-sm text-text/60">No description provided for this event.</p>
+                    <p className="text-sm text-text/60">
+                      No description provided for this event.
+                    </p>
                   )}
                 </div>
               </div>
             </div>
           ) : (
-            <div className="p-8 text-center text-sm font-bold text-text/60">Event not found</div>
+            <div className="p-8 text-center text-sm font-bold text-text/60">
+              Event not found
+            </div>
           )}
         </div>
       </section>
@@ -230,17 +250,25 @@ function EventDetails() {
         <div className="rounded-2xl bg-white/95 px-4 py-3 shadow-lg backdrop-blur sm:flex sm:items-center sm:justify-between">
           <div className="mb-3 flex items-center gap-4 sm:mb-0">
             <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-seat-gray1">
-              <img src={event?.imageUrl} alt={event?.name ?? "event"} className="h-full w-full object-cover" />
+              <img
+                src={event?.imageUrl}
+                alt={event?.name ?? "event"}
+                className="h-full w-full object-cover"
+              />
             </div>
             <div>
               <div className="text-sm font-semibold">{event?.name}</div>
-              <div className="text-xs text-text/60">{event ? formatEventDate(event.dateTime) : ""}</div>
+              <div className="text-xs text-text/60">
+                {event ? formatEventDate(event.dateTime) : ""}
+              </div>
             </div>
           </div>
 
           <div className="flex items-center gap-3 sm:gap-6">
             <div className="text-left">
-              <div className="text-sm font-semibold text-primary">From ₹499</div>
+              <div className="text-sm font-semibold text-primary">
+                From ₹499
+              </div>
               <div className="text-xs text-text/60">Booking fees may apply</div>
             </div>
             <button
@@ -257,22 +285,43 @@ function EventDetails() {
 
       <AnimatePresence>
         {activeAuthModal === "login" && (
-          <LoginModal onClose={() => setActiveAuthModal(null)} onSuccess={() => { setIsAuthenticated(true); setActiveAuthModal(null); }} onSwitchToSignup={() => setActiveAuthModal("signup")} />
+          <LoginModal
+            onClose={() => setActiveAuthModal(null)}
+            onSuccess={() => {
+              setIsAuthenticated(true);
+              setActiveAuthModal(null);
+            }}
+            onSwitchToSignup={() => setActiveAuthModal("signup")}
+          />
         )}
         {activeAuthModal === "signup" && (
-          <SignupModal onClose={() => setActiveAuthModal(null)} onSuccess={() => { setIsAuthenticated(true); setActiveAuthModal(null); }} onSwitchToLogin={() => setActiveAuthModal("login")} />
+          <SignupModal
+            onClose={() => setActiveAuthModal(null)}
+            onSuccess={() => {
+              setIsAuthenticated(true);
+              setActiveAuthModal(null);
+            }}
+            onSwitchToLogin={() => setActiveAuthModal("login")}
+          />
         )}
 
         {showSeatModal && event?._id && (
-          <SeatGrid eventId={event._id} onClose={() => setShowSeatModal(false)} onReserved={handleReservation} />
+          <SeatGrid
+            eventId={event._id}
+            onClose={() => setShowSeatModal(false)}
+            onReserved={handleReservation}
+          />
         )}
 
         {showBookingModal && reservationInfo && (
           <BookingModal
             reservation={reservationInfo}
-            onCancel={cancelReservation}
-            onPay={() => bookSeats()}
-            onClose={() => { setShowBookingModal(false); setReservationInfo(null); }}
+            onCancel={() => cancelReservation(reservationInfo?.reservationId)}
+            onPay={() => bookSeats(reservationInfo?.reservationId)}
+            onClose={() => {
+              setShowBookingModal(false);
+              setReservationInfo(null);
+            }}
           />
         )}
       </AnimatePresence>

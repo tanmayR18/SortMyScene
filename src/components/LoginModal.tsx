@@ -82,6 +82,7 @@ function LoginModal({ onClose, onSuccess, onSwitchToSignup }: LoginModalProps) {
       const response = await loginUser(payload);
       if (response && response.token) {
         localStorage.setItem("token", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
         onSuccess?.();
         onClose?.();
       }

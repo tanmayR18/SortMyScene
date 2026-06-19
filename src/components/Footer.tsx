@@ -76,7 +76,7 @@ function Footer() {
           <div className="grid gap-3 sm:grid-cols-3 lg:flex lg:items-center lg:gap-6">
             <span className="flex items-center gap-2">
               <FaMapMarkerAlt className="text-primary" />
-              Pune, Maharashtra
+              Mumbai, Maharashtra
             </span>
             <span className="flex items-center gap-2">
               <FaPhoneAlt className="text-primary" />

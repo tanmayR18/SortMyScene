@@ -89,6 +89,7 @@ function MobileSignup() {
       const response = await createUser(payload);
       if (response && response.token) {
         localStorage.setItem("token", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
         navigate("/");
       }
 
