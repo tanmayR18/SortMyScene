@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { get, post } from "./apiClient";
+import { get, post, del } from "./apiClient";
 
 export const checkHome = () => {
   return get("/");
@@ -31,6 +31,20 @@ export const getEventSeatStatus = (id: string) => {
 export const createReservation = (data: any) => {
   return post("/reserve", data);
 };
+
+export const cancelReserveSeat = (id: string) => {
+    return del(`/reserve/${id}`);
+};
+
+// Booking
+export const bookReservedSeats = (data: any) => {
+  return post("/bookings", data);
+};
+
+export const getBookings = () => {
+  return get("/bookings");
+};
+
 
 // export const updateUser = (id: string, data: any) => {
 //   return put(`/users/${id}`, data);

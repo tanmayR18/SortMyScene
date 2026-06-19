@@ -70,6 +70,7 @@ function MobileLogin() {
       const response = await loginUser(payload);
       if (response && response.token) {
         localStorage.setItem("token", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
         navigate("/");
       }
       setForm(initialForm);

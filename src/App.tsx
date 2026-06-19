@@ -36,6 +36,8 @@ function App() {
           }
         />
         <Route path="/event/:id" element={<EventDetails />} />
+        <Route path="*" element={<Home />} />
+
       </Routes>
       {!hideFooter && <Footer />}
     </div>
