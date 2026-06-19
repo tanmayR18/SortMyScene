@@ -1,8 +1,12 @@
+import SignupModal from "../components/SignupModal"
 
 
 function Home() {
   return (
-    <div className="text-black">Home</div>
+    <div className="text-black ">
+        {/* <LoginModal/> */}
+        {/* <SignupModal/> */}
+    </div>
   )
 }
 
