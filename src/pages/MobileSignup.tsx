@@ -9,8 +9,9 @@ import {
   FiMail,
   FiUser,
 } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createUser } from "../services/api";
+import toast from "react-hot-toast";
 
 type SignupForm = {
   name: string;
@@ -30,6 +31,7 @@ function validateSignupForm(form: SignupForm) {
   const errors: SignupErrors = {};
   const trimmedName = form.name.trim();
   const trimmedEmail = form.email.trim();
+  const trimmedPassword = form.password.trim();
 
   if (!trimmedName) {
     errors.name = "Name is required.";
@@ -43,11 +45,11 @@ function validateSignupForm(form: SignupForm) {
     errors.email = "Enter a valid email address.";
   }
 
-  if (!form.password) {
+  if (!trimmedPassword) {
     errors.password = "Password is required.";
-  } else if (form.password.length < 8) {
+  } else if (trimmedPassword.length < 8) {
     errors.password = "Password must be at least 8 characters.";
-  } else if (!/(?=.*[A-Za-z])(?=.*\d)/.test(form.password)) {
+  } else if (!/(?=.*[A-Za-z])(?=.*\d)/.test(trimmedPassword)) {
     errors.password = "Use letters and at least one number.";
   }
 
@@ -55,6 +57,7 @@ function validateSignupForm(form: SignupForm) {
 }
 
 function MobileSignup() {
+  const navigate = useNavigate();
   const [form, setForm] = useState<SignupForm>(initialForm);
   const [errors, setErrors] = useState<SignupErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -84,17 +87,14 @@ function MobileSignup() {
         password: form.password.trim(),
       };
       const response = await createUser(payload);
-      console.log("Signup response:", response);
       if (response && response.token) {
         localStorage.setItem("token", response.token);
-        console.log("Signup successful:", response);
+        navigate("/");
       }
 
       setForm(initialForm);
     } catch {
-      setErrors({
-        email: "Signup failed. Please check your details and try again.",
-      });
+      toast.error("Unable to create account. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
