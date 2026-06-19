@@ -19,10 +19,10 @@ type Seat = {
   updatedAt: string;
 };
 
-type SeatStatusResponse = {
-  success: boolean;
-  seats: Seat[];
-};
+// type SeatStatusResponse = {
+//   success: boolean;
+//   seats: Seat[];
+// };
 
 function SeatGrid({
   eventId,
@@ -88,8 +88,8 @@ function SeatGrid({
   };
 
   // Arrange into 5 rows
-  const rows = 5;
-  const cols = Math.max(1, Math.ceil(seats.length / rows));
+//   const rows = 5;
+//   const cols = Math.max(1, Math.ceil(seats.length / rows));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">

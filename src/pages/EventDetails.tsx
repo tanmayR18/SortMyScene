@@ -1,15 +1,12 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   FaArrowRight,
   FaCalendarAlt,
-  FaChevronLeft,
-  FaChevronRight,
   FaMapMarkerAlt,
   FaTicketAlt,
   FaUserCircle,
-  FaArrowLeft,
 } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import LoginModal from "../components/LoginModal";
@@ -102,7 +99,7 @@ function EventDetails() {
     setShowBookingModal(false);
   };
 
-  const bookSeats = async (reservationId: string) => {
+  const bookSeats = async () => {
     // placeholder booking logic - will implement actual booking later
     try {
       // TODO: call booking API
@@ -274,7 +271,7 @@ function EventDetails() {
           <BookingModal
             reservation={reservationInfo}
             onCancel={cancelReservation}
-            onPay={() => bookSeats(reservationInfo.reservationId)}
+            onPay={() => bookSeats()}
             onClose={() => { setShowBookingModal(false); setReservationInfo(null); }}
           />
         )}
